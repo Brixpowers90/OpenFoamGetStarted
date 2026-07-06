@@ -3,6 +3,10 @@
               (No Admin Rights / No PowerShell Required)
 ================================================================================
 
+RECOMMENDED IMAGE: opencfd/openfoam-default (456 MB - faster download!)
+ALTERNATIVE: openfoam/openfoam:v2412 (2-3 GB - includes ParaView)
+
+================================================================================
 STEP 1: Install Docker Desktop
 ---------------------------
 1. Download from: https://www.docker.com/products/docker-desktop/
@@ -12,11 +16,13 @@ STEP 1: Install Docker Desktop
 
 STEP 2: Download OpenFOAM Image
 --------------------------------
-Open Command Prompt (cmd) and run:
+Open Command Prompt (cmd) and run ONE of these:
 
+RECOMMENDED (smaller, faster):
+    docker pull opencfd/openfoam-default
+
+ALTERNATIVE (with ParaView):
     docker pull openfoam/openfoam:v2412
-
-This downloads ~2-3 GB of data. Wait for completion.
 
 
 STEP 3: Create Cases Folder
@@ -25,106 +31,53 @@ Create this folder on your computer:
     Documents\OpenFOAM_cases
 
 
-STEP 4: Start OpenFOAM
------------------------
+STEP 4: Start OpenFOAM Container
+--------------------------------
 Option A: Double-click the file "start_openfoam.cmd" in this folder
+         (It will ask you to choose between the two images)
 
-Option B: Open Command Prompt and run:
+Option B: Open Command Prompt and run ONE of these:
+
+For RECOMMENDED image (opencfd/openfoam-default):
+    docker run -it --name my-openfoam -v "%USERPROFILE%\Documents\OpenFOAM_cases:/home/openfoam/cases" opencfd/openfoam-default
+
+For ALTERNATIVE image (with ParaView):
     docker run -it --name my-openfoam -v "%USERPROFILE%\Documents\OpenFOAM_cases:/home/openfoam/cases" openfoam/openfoam:v2412
 
 
-STEP 5: Run Test Simulation
----------------------------
-Inside the container, copy and paste these commands one by one:
+STEP 5: Run Your First Simulation
+--------------------------------
+Inside the container, copy and paste these commands:
 
-    mkdir -p /home/openfoam/cases/test_icoFoam
-    cd /home/openfoam/cases/test_icoFoam
-    
-    # Create a simple pipe flow case
-    cat > system/blockMeshDict << 'ENDOFFILE'
-FoamFile
-{
-    version     2.0;
-    format      ascii;
-    class       dictionary;
-    object      blockMeshDict;
-}
-convertToMeters 0.1;
-vertices ( (0 0 0) (1 0 0) (1 1 0) (0 1 0) (0 0 0.1) (1 0 0.1) (1 1 0.1) (0 1 0.1) );
-blocks ( hex (0 1 2 3 4 5 6 7) (10 10 1) simpleGrading (1 1 1) );
-boundary ( inlet { type patch; faces ((0 4 7 3)); } outlet { type patch; faces ((1 2 6 5)); } walls { type wall; faces ((0 1 5 4) (3 7 6 2)); } frontAndBack { type empty; faces ((0 3 2 1) (4 5 6 7)); } );
-ENDOFFILE
-
-    mkdir -p 0 constant system
-    
-    cat > 0/U << 'ENDOFFILE'
-FoamFile{version 2.0;format ascii;class volVectorField;object U;}
-dimensions [0 1 -1 0 0 0 0];
-internalField uniform (1 0 0);
-boundaryField{inlet{type fixedValue;value uniform (1 0 0);}outlet{type zeroGradient;}walls{type noSlip;}frontAndBack{type empty;}}
-ENDOFFILE
-
-    cat > 0/p << 'ENDOFFILE'
-FoamFile{version 2.0;format ascii;class volScalarField;object p;}
-dimensions [1 -1 -2 0 0 0 0];
-internalField uniform 0;
-boundaryField{inlet{type zeroGradient;}outlet{type fixedValue;value uniform 0;}walls{type zeroGradient;}frontAndBack{type empty;}}
-ENDOFFILE
-
-    cat > constant/transportProperties << 'ENDOFFILE'
-FoamFile{version 2.0;format ascii;class dictionary;object transportProperties;}
-transportModel Newtonian;
-nu nu [0 2 -1 0 0 0 0] 0.01;
-ENDOFFILE
-
-    cat > system/controlDict << 'ENDOFFILE'
-FoamFile{version 2.0;format ascii;class dictionary;object controlDict;}
-application icoFoam;
-startFrom startTime;
-startTime 0;
-stopAt endTime;
-endTime 0.5;
-deltaT 0.01;
-writeControl timeStep;
-writeInterval 10;
-purgeWrite 0;
-runTimeModifiable true;
-ENDOFFILE
-
-    cat > system/fvSchemes << 'ENDOFFILE'
-FoamFile{version 2.0;format ascii;class dictionary;object fvSchemes;}
-ddtSchemes{default Euler;}
-gradSchemes{default Gauss linear;}
-divSchemes{default none;}
-laplacianSchemes{default Gauss linear corrected;}
-interpolationSchemes{default linear;}
-snGradSchemes{default corrected;}
-ENDOFFILE
-
-    cat > system/fvSolution << 'ENDOFFILE'
-FoamFile{version 2.0;format ascii;class dictionary;object fvSolution;}
-solvers{p{ solver GAMG; tolerance 1e-6; relTol 0.01; }U{ solver smoothSolver; smoother symGaussSeidel; tolerance 1e-6; relTol 0.01; }}
-SIMPLE{nNonOrthogonalCorrectors 0; consistent yes; pRefCell 0; pRefValue 0;}
-relaxationFactors{equations{U 0.7; p 0.3;}}
-ENDOFFILE
-
+RECOMMENDED: Use built-in tutorial (easiest):
+    cd /home/openfoam/cases
+    cp -r /opt/openfoam/tutorials/incompressible/icoFoam/cavity .
+    cd cavity
     blockMesh
     icoFoam
 
-Wait for simulation to complete (takes ~1-2 minutes).
+OR: Create manual test case:
+    mkdir -p /home/openfoam/cases/test_icoFoam
+    cd /home/openfoam/cases/test_icoFoam
+    
+    # Copy all the case files from INSTALL_GUIDE_NO_ADMIN.md
+    # Or use the cavity tutorial as shown above
+    
+    blockMesh
+    icoFoam
 
 
 STEP 6: Visualize Results
 --------------------------
-Option A: Inside container, run:
+Option A: If using openfoam/openfoam:v2412 (has ParaView):
     paraFoam
 
-Option B: On your host machine:
+Option B: On your host machine (RECOMMENDED):
 1. Download ParaView: https://www.paraview.org/download/
 2. Install ParaView
 3. Open ParaView
-4. Navigate to: Documents\OpenFOAM_cases\test_icoFoam
-5. Open the file: test_icoFoam.foam
+4. Navigate to: Documents\OpenFOAM_cases\cavity (or test_icoFoam)
+5. Open the .foam file
 6. Click Apply to see your simulation!
 
 
@@ -154,6 +107,10 @@ PROBLEM: Out of memory
 SOLUTION: In Docker Desktop: Settings > Resources > Increase memory
 
 
+PROBLEM: Corporate firewall blocking Docker?
+SOLUTION: Ask IT to allow connections to hub.docker.com (port 443)
+
+
 ================================================================================
                             USEFUL COMMANDS
 ================================================================================
@@ -165,14 +122,39 @@ List containers:     docker ps -a
 List images:         docker images
 Open shell:          docker exec -it my-openfoam bash
 
+Pull recommended:   docker pull opencfd/openfoam-default
+Pull alternative:   docker pull openfoam/openfoam:v2412
+
+================================================================================
+                            IMAGE COMPARISON
+================================================================================
+
+opencfd/openfoam-default:    openfoam/openfoam:v2412:
+------------------------------------------------------------
+Size: 456 MB                Size: 2-3 GB
+Includes: runtime, source,   Includes: runtime, ParaView
+         tutorials, dev tools
+ParaView: NO (download sep)  ParaView: YES
+Download: FAST              Download: SLOWER
+Recommended: YES            Recommended: NO (for corporate)
 
 ================================================================================
                             NEXT STEPS
 ================================================================================
 
 1. Try more tutorials: /opt/openfoam/tutorials
-2. Modify the test case: Edit files in 0/ and system/ directories
+2. Modify existing cases: Edit files in 0/ and system/ directories
 3. Create your own cases from scratch
 4. Explore OpenFOAM documentation: https://www.openfoam.com/documentation/
+
+================================================================================
+                            RESOURCES
+================================================================================
+
+opencfd/openfoam-default: https://hub.docker.com/r/opencfd/openfoam-default
+openfoam/openfoam:v2412:  https://hub.docker.com/r/openfoam/openfoam
+ParaView Download:        https://www.paraview.org/download/
+OpenFOAM Docs:            https://www.openfoam.com/documentation/
+Docker Docs:              https://docs.docker.com/
 
 ================================================================================

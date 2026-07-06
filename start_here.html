@@ -73,6 +73,13 @@
             margin: 10px 0;
             border-radius: 4px;
         }
+        .recommended {
+            background-color: #d1ecf1;
+            border: 2px solid #17a2b8;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
         .file-link {
             display: block;
             background-color: #e9ecef;
@@ -103,11 +110,43 @@
             border-radius: 4px;
             margin: 20px 0;
         }
+        .comparison {
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #0066cc;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .check {
+            color: #28a745;
+            font-weight: bold;
+        }
+        .cross {
+            color: #dc3545;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
     <h1>\ud83d\ud83\ufe0f OpenFOAM Quick Start Guide</h1>
     <p><strong>No Admin Rights Required - Perfect for Corporate PCs</strong></p>
+
+    <div class="recommended">
+        <strong>\u2728 RECOMMENDED:</strong> Use <code>opencfd/openfoam-default</code> (456 MB) - Faster download on corporate networks!
+    </div>
 
     <div class="note">
         <strong>\ud83d\udc81 Welcome!</strong> This guide helps you install and run OpenFOAM using Docker without requiring administrator privileges.
@@ -137,16 +176,29 @@
 
     <div class="step">
         <h3>\ud83d\udce9 Step 2: Download OpenFOAM Docker Image</h3>
-        <p>Open Command Prompt (cmd) and run:</p>
+        <p>Open Command Prompt (cmd) and run <strong>ONE</strong> of these:</p>
+        
+        <div class="recommended">
+            <p><strong>\u2728 RECOMMENDED (456 MB - Faster!):</strong></p>
+            <div class="cmd">docker pull opencfd/openfoam-default</div>
+            <ul>
+                <li class="check">Smaller size (456 MB)</li>
+                <li class="check">Includes runtime, source, tutorials, dev tools</li>
+                <li class="check">Faster download on corporate networks</li>
+                <li class="cross">ParaView not included (download separately)</li>
+            </ul>
+        </div>
+        
+        <p><strong>Alternative (2-3 GB - Includes ParaView):</strong></p>
         <div class="cmd">docker pull openfoam/openfoam:v2412</div>
+        <ul>
+            <li class="check">Includes ParaView</li>
+            <li class="cross">Larger size (2-3 GB)</li>
+            <li class="cross">Slower download</li>
+        </ul>
         
         <div class="note">
-            <strong>What this does:</strong>
-            <ul>
-                <li>Downloads the latest OpenFOAM v2412 image (~2-3 GB)</li>
-                <li>Includes OpenFOAM, ParaView, and all dependencies</li>
-                <li>May take 5-15 minutes depending on your internet speed</li>
-            </ul>
+            <strong>For corporate environments:</strong> We strongly recommend <code>opencfd/openfoam-default</code> as it's significantly smaller and less likely to be blocked by IT policies.
         </div>
     </div>
 
@@ -164,9 +216,15 @@
         <p><strong>Option A: Easiest Method</strong></p>
         <p>Double-click this file:</p>
         <a href="start_openfoam.cmd" class="file-link">\ud83d\udccv start_openfoam.cmd</a>
+        <p>It will ask you to choose between the two images.</p>
         
         <p><strong>Option B: Manual Method</strong></p>
-        <p>Open Command Prompt and run:</p>
+        <p>Open Command Prompt and run <strong>ONE</strong> of these:</p>
+        
+        <p><strong>For RECOMMENDED image (opencfd/openfoam-default):</strong></p>
+        <div class="cmd">docker run -it --name my-openfoam -v "%USERPROFILE%\Documents\OpenFOAM_cases:/home/openfoam/cases" opencfd/openfoam-default</div>
+        
+        <p><strong>For ALTERNATIVE image (with ParaView):</strong></p>
         <div class="cmd">docker run -it --name my-openfoam -v "%USERPROFILE%\Documents\OpenFOAM_cases:/home/openfoam/cases" openfoam/openfoam:v2412</div>
         
         <div class="success">
@@ -176,43 +234,46 @@
 
     <div class="step">
         <h3>\ud83d\udca1 Step 5: Run Your First Simulation</h3>
-        <p>Inside the container, copy and paste these commands one by one:</p>
+        <p>Inside the container, copy and paste these commands:</p>
         
-        <div class="cmd">mkdir -p /home/openfoam/cases/test_icoFoam && cd /home/openfoam/cases/test_icoFoam</div>
+        <div class="recommended">
+            <p><strong>\u2728 RECOMMENDED: Use built-in tutorial (easiest)</strong></p>
+            <div class="cmd">cd /home/openfoam/cases && cp -r /opt/openfoam/tutorials/incompressible/icoFoam/cavity . && cd cavity</div>
+            <div class="cmd">blockMesh</div>
+            <div class="cmd">icoFoam</div>
+        </div>
         
-        <div class="cmd">cp -r /opt/openfoam/tutorials/incompressible/icoFoam/cavity .</div>
-        
-        <div class="cmd">blockMesh</div>
-        
-        <div class="cmd">icoFoam</div>
+        <p><strong>What this does:</strong></p>
+        <ul>
+            <li><code>cp -r ...</code> copies the cavity tutorial case</li>
+            <li><code>blockMesh</code> creates the computational mesh</li>
+            <li><code>icoFoam</code> runs the incompressible flow solver</li>
+            <li>Simulation runs for a short time</li>
+        </ul>
         
         <div class="note">
-            <strong>What this does:</strong>
-            <ul>
-                <li><code>blockMesh</code> creates the computational mesh</li>
-                <li><code>icoFoam</code> runs the incompressible flow solver</li>
-                <li>Simulation runs for a short time</li>
-            </ul>
+            <strong>Tip:</strong> The <code>opencfd/openfoam-default</code> image includes many tutorials in <code>/opt/openfoam/tutorials</code>
         </div>
     </div>
 
     <div class="step">
         <h3>\ud83d\udcc8 Step 6: Visualize Results</h3>
         
-        <p><strong>Option A: Use ParaView Inside Container</strong></p>
+        <p><strong>Option A: Use ParaView Inside Container (only for openfoam/openfoam:v2412)</strong></p>
         <div class="cmd">paraFoam</div>
         <ul>
-            <li>Navigate to <code>/home/openfoam/cases/test_icoFoam</code></li>
+            <li>Navigate to <code>/home/openfoam/cases/cavity</code></li>
             <li>Open the <code>cavity.foam</code> file</li>
             <li>Click <strong>Apply</strong> to see your simulation results</li>
         </ul>
         
-        <p><strong>Option B: Use ParaView on Your Host Machine</strong></p>
+        <p><strong>Option B: Use ParaView on Your Host Machine (RECOMMENDED)</strong></p>
+        <p>Since <code>opencfd/openfoam-default</code> doesn't include ParaView:</p>
         <ol>
             <li><a href="https://www.paraview.org/download/" class="download-btn">Download ParaView</a></li>
             <li>Install ParaView</li>
             <li>Open ParaView</li>
-            <li>Navigate to: <code>Documents\OpenFOAM_cases\test_icoFoam</code></li>
+            <li>Navigate to: <code>Documents\OpenFOAM_cases\cavity</code></li>
             <li>Open the <code>cavity.foam</code> file</li>
             <li>Click <strong>Apply</strong> to visualize</li>
         </ol>
@@ -227,6 +288,57 @@
         <div class="cmd">docker stop my-openfoam</div>
     </div>
 
+    <div class="comparison">
+        <h3>\ud83d\udcc3 Image Comparison</h3>
+        <table>
+            <tr>
+                <th>Feature</th>
+                <th>opencfd/openfoam-default</th>
+                <th>openfoam/openfoam:v2412</th>
+            </tr>
+            <tr>
+                <td><strong>Size</strong></td>
+                <td class="check">456 MB</td>
+                <td>2-3 GB</td>
+            </tr>
+            <tr>
+                <td><strong>OpenFOAM Runtime</strong></td>
+                <td class="check">\u2713 Yes</td>
+                <td class="check">\u2713 Yes</td>
+            </tr>
+            <tr>
+                <td><strong>Source Code</strong></td>
+                <td class="check">\u2713 Yes</td>
+                <td>\u2717 No</td>
+            </tr>
+            <tr>
+                <td><strong>Tutorials</strong></td>
+                <td class="check">\u2713 Yes</td>
+                <td class="check">\u2713 Yes</td>
+            </tr>
+            <tr>
+                <td><strong>Development Tools</strong></td>
+                <td class="check">\u2713 Yes</td>
+                <td>\u2717 No</td>
+            </tr>
+            <tr>
+                <td><strong>ParaView</strong></td>
+                <td>\u2717 No</td>
+                <td class="check">\u2713 Yes</td>
+            </tr>
+            <tr>
+                <td><strong>Download Speed</strong></td>
+                <td class="check">\u2705 Fast</td>
+                <td>\u274c Slower</td>
+            </tr>
+            <tr>
+                <td><strong>Corporate Friendly</strong></td>
+                <td class="check">\u2705 Best</td>
+                <td>\u274c Good</td>
+            </tr>
+        </table>
+    </div>
+
     <div class="tips">
         <h3>\ud83d\udca1 Pro Tips</h3>
         <ul>
@@ -234,7 +346,8 @@
             <li><strong>List running containers:</strong> <code>docker ps</code></li>
             <li><strong>List all containers:</strong> <code>docker ps -a</code></li>
             <li><strong>Remove container:</strong> <code>docker rm my-openfoam</code></li>
-            <li><strong>Remove image:</strong> <code>docker rmi openfoam/openfoam:v2412</code></li>
+            <li><strong>Remove image:</strong> <code>docker rmi opencfd/openfoam-default</code></li>
+            <li><strong>Explore tutorials:</strong> <code>ls /opt/openfoam/tutorials</code></li>
         </ul>
     </div>
 
@@ -260,7 +373,14 @@
         <p>In Docker Desktop: Settings \u276f Resources \u276f Increase memory allocation</p>
         
         <h4>Corporate firewall blocking Docker?</h4>
-        <p>Ask IT to allow connections to <code>hub.docker.com</code> on port 443.</p>
+        <p>Ask IT to allow connections to:</p>
+        <ul>
+            <li><code>hub.docker.com</code> (port 443)</li>
+            <li><code>ghcr.io</code> (port 443)</li>
+        </ul>
+        
+        <h4>Proxy settings?</h4>
+        <p>In Docker Desktop: Settings \u276f Resources \u276f Proxies</p>
     </div>
 
     <div class="step">
@@ -269,9 +389,22 @@
             <li><a href="INSTALL_GUIDE_NO_ADMIN.md" class="file-link">\ud83d\udcc4 Detailed Installation Guide (No Admin)</a></li>
             <li><a href="QUICK_START.txt" class="file-link">\ud83d\udcc3 Quick Start Reference (Text)</a></li>
             <li><a href="GETTING_STARTED.md" class="file-link">\ud83d\udcc2 Standard Getting Started Guide</a></li>
+            <li><a href="https://hub.docker.com/r/opencfd/openfoam-default" class="download-btn">opencfd/openfoam-default on Docker Hub</a></li>
+            <li><a href="https://hub.docker.com/r/openfoam/openfoam" class="download-btn">openfoam/openfoam on Docker Hub</a></li>
             <li><a href="https://www.openfoam.com/documentation/" class="download-btn">OpenFOAM Documentation</a></li>
-            <li><a href="https://hub.docker.com/u/openfoam" class="download-btn">OpenFOAM Docker Images</a></li>
             <li><a href="https://discourse.openfoam.com/" class="download-btn">OpenFOAM Forum</a></li>
+        </ul>
+    </div>
+
+    <div class="recommended">
+        <h3>\u2728 Why We Recommend opencfd/openfoam-default for Corporate Users</h3>
+        <ul>
+            <li><strong>\u2705 Smaller size (456 MB)</strong> - Faster download on corporate networks with bandwidth restrictions</li>
+            <li><strong>\u2705 Complete package</strong> - Includes everything you need: runtime, source code, tutorials, and development tools</li>
+            <li><strong>\u2705 Officially maintained</strong> - By OpenCFD Ltd (the commercial arm of OpenFOAM)</li>
+            <li><strong>\u2705 Frequently updated</strong> - Follows the latest OpenFOAM releases</li>
+            <li><strong>\u2705 Less likely to be blocked</strong> - Smaller download = less chance of IT restrictions</li>
+            <li><strong>\u2705 ParaView can be installed separately</strong> - Download from <a href="https://www.paraview.org/download/">paraview.org</a></li>
         </ul>
     </div>
 

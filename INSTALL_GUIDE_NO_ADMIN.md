@@ -4,7 +4,7 @@ This guide helps you install and run OpenFOAM using Docker **without requiring a
 
 ---
 
-## **✅ What You Need**
+## **\u2705 What You Need**
 
 1. **Docker Desktop** installed on your machine
 2. **Internet access** to download Docker images
@@ -12,7 +12,7 @@ This guide helps you install and run OpenFOAM using Docker **without requiring a
 
 ---
 
-## **📋 Step 1: Install Docker Desktop**
+## **\ud83d\udccb Step 1: Install Docker Desktop**
 
 ### **Check if Docker is Already Installed**
 Open Command Prompt (cmd) and type:
@@ -48,29 +48,45 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io
 
 ---
 
-## **🐳 Step 2: Download OpenFOAM Docker Image**
+## **\ud83d\udc33 Step 2: Download OpenFOAM Docker Image**
 
 Open **Command Prompt** (Windows) or **Terminal** (macOS/Linux) and run:
 
+### **\u2728 Recommended: Small & Fast (456 MB)**
+```cmd
+docker pull opencfd/openfoam-default
+```
+
+### **Alternative: Full with ParaView (2-3 GB)**
 ```cmd
 docker pull openfoam/openfoam:v2412
 ```
 
 **What this does:**
-- Downloads the latest OpenFOAM v2412 image (~2-3 GB)
-- Includes OpenFOAM, ParaView, and all dependencies
-- May take 5-15 minutes depending on your internet speed
+- **Recommended image** (`opencfd/openfoam-default`):
+  - Downloads ~456 MB (faster, better for corporate networks)
+  - Includes OpenFOAM runtime, source code, tutorials, and development tools
+  - Perfect for most users
+  - Updated frequently by OpenCFD
+  - **Note:** ParaView not included (install separately if needed)
+
+- **Alternative image** (`openfoam/openfoam:v2412`):
+  - Downloads ~2-3 GB
+  - Includes OpenFOAM and ParaView
+  - Larger but has built-in visualization
 
 **Expected output:**
 ```
-v2412: Pulling from openfoam/openfoam
+latest: Pulling from opencfd/openfoam-default
 Digest: sha256:...
-Status: Downloaded newer image for openfoam/openfoam:v2412
+Status: Downloaded newer image for opencfd/openfoam-default:latest
 ```
+
+**\u2139 Note:** For corporate environments, we **strongly recommend** `opencfd/openfoam-default` as it's significantly smaller and downloads much faster on restricted networks.
 
 ---
 
-## **🚀 Step 3: Start OpenFOAM Container**
+## **\ud83d\ude80 Step 3: Start OpenFOAM Container**
 
 ### **Create a folder for your cases**
 1. Open File Explorer (Windows) or Finder (macOS)
@@ -78,12 +94,26 @@ Status: Downloaded newer image for openfoam/openfoam:v2412
 
 ### **Start the container with your cases folder mounted**
 
-#### **Windows (Command Prompt):**
+#### **Using Recommended Image (opencfd/openfoam-default):**
+
+##### **Windows (Command Prompt):**
+```cmd
+docker run -it --name my-openfoam -v "%USERPROFILE%\Documents\OpenFOAM_cases:/home/openfoam/cases" opencfd/openfoam-default
+```
+
+##### **macOS/Linux (Terminal):**
+```bash
+docker run -it --name my-openfoam -v "$HOME/Documents/OpenFOAM_cases:/home/openfoam/cases" opencfd/openfoam-default
+```
+
+#### **Using Alternative Image (with ParaView):**
+
+##### **Windows (Command Prompt):**
 ```cmd
 docker run -it --name my-openfoam -v "%USERPROFILE%\Documents\OpenFOAM_cases:/home/openfoam/cases" openfoam/openfoam:v2412
 ```
 
-#### **macOS/Linux (Terminal):**
+##### **macOS/Linux (Terminal):**
 ```bash
 docker run -it --name my-openfoam -v "$HOME/Documents/OpenFOAM_cases:/home/openfoam/cases" openfoam/openfoam:v2412
 ```
@@ -100,7 +130,7 @@ root@container-id:/home/openfoam#
 
 ---
 
-## **🧪 Step 4: Run Your First Simulation**
+## **\ud83e\uddea Step 4: Run Your First Simulation**
 
 Now you're inside the OpenFOAM container! Let's run a simple test case.
 
@@ -110,8 +140,25 @@ mkdir -p /home/openfoam/cases/test_icoFoam
 cd /home/openfoam/cases/test_icoFoam
 ```
 
-### **Create the mesh (blockMeshDict):**
+### **Option A: Use Built-in Tutorial (Recommended)**
+The `opencfd/openfoam-default` image includes tutorials. Copy one:
 ```bash
+cp -r /opt/openfoam/tutorials/incompressible/icoFoam/cavity .
+cd cavity
+```
+
+Then run:
+```bash
+blockMesh
+icoFoam
+```
+
+### **Option B: Create Manual Test Case**
+If you want to create from scratch:
+
+#### **Create the mesh (blockMeshDict):**
+```bash
+mkdir -p system
 cat > system/blockMeshDict << 'EOF'
 FoamFile
 {
@@ -174,12 +221,12 @@ mergePatchPairs
 EOF
 ```
 
-### **Create the initial fields (0 directory):**
+#### **Create the initial fields (0 directory):**
 ```bash
 mkdir -p 0
 ```
 
-### **Create velocity file (0/U):**
+#### **Create velocity file (0/U):**
 ```bash
 cat > 0/U << 'EOF'
 FoamFile
@@ -217,7 +264,7 @@ boundaryField
 EOF
 ```
 
-### **Create pressure file (0/p):**
+#### **Create pressure file (0/p):**
 ```bash
 cat > 0/p << 'EOF'
 FoamFile
@@ -255,7 +302,7 @@ boundaryField
 EOF
 ```
 
-### **Create transport properties (constant/transportProperties):**
+#### **Create transport properties (constant/transportProperties):**
 ```bash
 mkdir -p constant
 cat > constant/transportProperties << 'EOF'
@@ -273,7 +320,7 @@ nu              nu [0 2 -1 0 0 0 0] 0.01;
 EOF
 ```
 
-### **Create solver settings (system/controlDict):**
+#### **Create solver settings (system/controlDict):**
 ```bash
 cat > system/controlDict << 'EOF'
 FoamFile
@@ -308,7 +355,7 @@ libraries       ("libOpenFOAM.so");
 EOF
 ```
 
-### **Create numerical schemes (system/fvSchemes):**
+#### **Create numerical schemes (system/fvSchemes):**
 ```bash
 cat > system/fvSchemes << 'EOF'
 FoamFile
@@ -352,7 +399,7 @@ snGradSchemes
 EOF
 ```
 
-### **Create solution settings (system/fvSolution):**
+#### **Create solution settings (system/fvSolution):**
 ```bash
 cat > system/fvSolution << 'EOF'
 FoamFile
@@ -399,7 +446,7 @@ relaxationFactors
 EOF
 ```
 
-### **Run the simulation:**
+#### **Run the simulation:**
 ```bash
 blockMesh
 icoFoam
@@ -423,35 +470,59 @@ End
 
 ---
 
-## **📊 Step 5: Visualize Results**
+## **\ud83d\udcc8 Step 5: Visualize Results**
 
-### **Option 1: Use ParaView Inside Container**
+### **Option 1: Use ParaView Inside Container (if using openfoam/openfoam:v2412)**
 Inside the container, run:
 ```bash
 paraFoam
 ```
-- Navigate to `/home/openfoam/cases/test_icoFoam`
-- Open the `test_icoFoam.foam` file
+- Navigate to `/home/openfoam/cases/test_icoFoam` or `/home/openfoam/cases/cavity`
+- Open the `.foam` file
 - Click **Apply** to see your simulation results
 
-### **Option 2: Use ParaView on Your Host Machine**
+### **Option 2: Use ParaView on Your Host Machine (Recommended)**
+Since `opencfd/openfoam-default` doesn't include ParaView, download it separately:
+
 1. **Download ParaView**: [https://www.paraview.org/download/](https://www.paraview.org/download/)
 2. **Install ParaView** on your machine
 3. **Open ParaView**
 4. **Load your case**:
    - Navigate to `Documents\OpenFOAM_cases\test_icoFoam` (Windows)
    - Or `~/Documents/OpenFOAM_cases/test_icoFoam` (macOS/Linux)
-   - Select the `test_icoFoam.foam` file
-   - Click **Apply**
-5. **Visualize**:
-   - In the Pipeline Browser, click on `test_icoFoam.foam`
-   - Click the **Play** button to animate the flow
-   - Use the toolbar to add **Slice** or **Stream Tracer** filters
-   - Color by **U** (velocity) or **p** (pressure)
+   - Select the `.foam` file and click **Apply**
+5. **Visualize the results**:
+   - Use the **Pipeline Browser** to add filters (e.g., **Slice**, **Stream Tracer**)
+   - Color the mesh by **U** (velocity) or **p** (pressure)
 
 ---
 
-## **🔄 Step 6: Stop and Restart Container**
+## **\ud83d\udcc2 Step 6: Explore Built-in Tutorials**
+
+The `opencfd/openfoam-default` image includes many tutorials. Explore them:
+
+```bash
+ls /opt/openfoam/tutorials
+```
+
+Example tutorials:
+- `incompressible/icoFoam/cavity` - Simple cavity flow
+- `incompressible/simpleFoam/pitzDaily` - Turbulent flow
+- `multiphase/interFoam/damBreak` - Free surface flow
+- `heatTransfer/buoyantSimpleFoam/hotRoom` - Natural convection
+
+To run a tutorial:
+```bash
+cd /home/openfoam/cases
+cp -r /opt/openfoam/tutorials/incompressible/icoFoam/cavity .
+cd cavity
+blockMesh
+icoFoam
+```
+
+---
+
+## **\ud83d\udcde Step 7: Stop and Restart Container**
 
 ### **Exit the container (without deleting it):**
 Press `Ctrl+D` or type `exit`
@@ -475,7 +546,7 @@ docker stop my-openfoam
 
 ---
 
-## **📝 Quick Reference Commands**
+## **\ud83d\udcc3 Quick Reference Commands**
 
 | Action | Command |
 |--------|---------|
@@ -486,19 +557,21 @@ docker stop my-openfoam
 | List images | `docker images` |
 | Open shell in container | `docker exec -it my-openfoam bash` |
 | Copy files from container | `docker cp my-openfoam:/path/in/container /path/on/host` |
+| Pull recommended image | `docker pull opencfd/openfoam-default` |
+| Pull full image | `docker pull openfoam/openfoam:v2412` |
 
 ---
 
-## **🎯 Next Steps**
+## **\ud83c\udf89 Next Steps**
 
-1. **Try more tutorials**: Copy cases from `/opt/openfoam/tutorials`
+1. **Try more tutorials**: Explore the cases in `/opt/openfoam/tutorials`
 2. **Modify the test case**: Change boundary conditions in `0/U` or `0/p`
 3. **Create your own cases**: Start from scratch or copy existing ones
 4. **Explore OpenFOAM documentation**: [https://www.openfoam.com/documentation/](https://www.openfoam.com/documentation/)
 
 ---
 
-## **❓ Troubleshooting**
+## **\u2753 Troubleshooting**
 
 ### **Docker not running?**
 - **Windows/macOS**: Make sure Docker Desktop is running (whale icon visible)
@@ -520,56 +593,40 @@ docker stop my-openfoam
 - Make sure your case files are in the mounted volume
 
 ### **Out of memory?**
-- In Docker Desktop: Settings → Resources → Increase memory allocation
+- In Docker Desktop: Settings \u276f Resources \u276f Increase memory allocation
+
+### **Corporate firewall blocking Docker?**
+- Ask IT to allow connections to:
+  - `hub.docker.com` (port 443)
+  - `ghcr.io` (port 443)
+  - Docker's registry endpoints
+
+### **Proxy settings?**
+- In Docker Desktop: Settings \u276f Resources \u276f Proxies
+- Configure your corporate proxy there
 
 ---
 
-## **📚 Additional Resources**
+## **\ud83d\udcda Additional Resources**
 
 - [OpenFOAM Official Documentation](https://www.openfoam.com/documentation/)
-- [OpenFOAM Docker Images](https://hub.docker.com/u/openfoam)
+- [OpenFOAM Docker Images (OpenCFD)](https://hub.docker.com/u/opencfd)
+- [OpenFOAM Docker Images (Foundation)](https://hub.docker.com/u/openfoam)
 - [OpenFOAM Tutorials](https://www.openfoam.com/documentation/tutorials/)
 - [ParaView Download](https://www.paraview.org/download/)
 - [Docker Documentation](https://docs.docker.com/)
 
 ---
 
-## **💡 Tips for Corporate Environments**
+## **\ud83d\ude4f Why We Recommend opencfd/openfoam-default**
 
-1. **Proxy settings**: If your company uses a proxy, configure Docker to use it:
-   - Windows: Docker Desktop → Settings → Resources → Proxies
-   - macOS: Docker Desktop → Preferences → Resources → Proxies
-
-2. **Storage location**: If C: drive is full, change Docker's storage location:
-   - Docker Desktop → Settings → Resources → Advanced → Disk image location
-
-3. **Firewall**: If Docker can't connect, ask IT to allow:
-   - Outbound connections to `hub.docker.com` (port 443)
-   - Docker's network traffic
-
-4. **Antivirus**: Some antivirus software may slow down Docker. Ask IT to add exceptions for:
-   - Docker Desktop
-   - Docker's virtual machine files
+1. **Smaller size** (456 MB vs 2-3 GB) - Faster download on corporate networks
+2. **Complete package** - Includes runtime, source code, tutorials, and dev tools
+3. **Officially maintained** by OpenCFD Ltd (the commercial arm of OpenFOAM)
+4. **Frequently updated** - Follows the latest OpenFOAM releases
+5. **Proven reliability** - Used by many in the OpenFOAM community
+6. **Better for restricted environments** - Less likely to be blocked by IT
 
 ---
 
-## **🧹 Cleanup (When Needed)**
-
-### **Remove the container:**
-```cmd
-docker rm my-openfoam
-```
-
-### **Remove the Docker image:**
-```cmd
-docker rmi openfoam/openfoam:v2412
-```
-
-### **Remove all unused Docker objects:**
-```cmd
-docker system prune
-```
-
----
-
-**🎉 Congratulations!** You now have OpenFOAM running and have completed your first simulation!
+**\ud83c\udf89 Congratulations!** You now have OpenFOAM running and have completed your first simulation!
