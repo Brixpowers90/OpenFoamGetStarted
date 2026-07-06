@@ -1,68 +1,92 @@
 # OpenFOAM Docker Agent
 
-A simple agent to install and run **OpenFOAM** on any machine using **Docker**. This project provides scripts to:
-- Install Docker (if not already installed).
-- Run OpenFOAM in a Docker container.
-- Test the installation with a simple `icoFoam` case.
-- Visualize results in ParaView.
+A simple agent to install and run **OpenFOAM** on any machine using **Docker**. This project provides multiple installation methods to accommodate different environments, including corporate settings with restricted access.
 
 ---
 
-## **📌 Features**
+## **\ud83d\udccc Features**
 
-✅ **Cross-platform**: Works on **Windows, macOS, and Linux**.
-✅ **Minimal setup**: Only requires Docker.
-✅ **Latest OpenFOAM**: Uses **OpenFOAM v2412** (latest stable release).
-✅ **ParaView included**: Visualize results directly in the container.
-✅ **Python support**: Optional Python tools for post-processing.
-✅ **Test case**: Verify installation with a simple `icoFoam` simulation.
-✅ **Uninstall guide**: Easy cleanup of Docker containers and images.
+\u2705 **Cross-platform**: Works on **Windows, macOS, and Linux**.
+\u2705 **Minimal setup**: Only requires Docker.
+\u2705 **Latest OpenFOAM**: Uses **OpenFOAM v2412** (latest stable release).
+\u2705 **ParaView included**: Visualize results directly in the container.
+\u2705 **Multiple installation methods**: Scripts for different access levels.
+\u2705 **Test case**: Verify installation with a simple `icoFoam` simulation.
+\u2705 **Uninstall guide**: Easy cleanup of Docker containers and images.
 
 ---
 
-## **🚀 Quick Start**
+## **\ud83d\ude80 Quick Start - Choose Your Method**
 
-### **1. Clone or Download This Repository**
+### **\ud83d\udca1 Method 1: Standard Installation (Full Access)**
+For users with full administrative access and PowerShell/Bash capabilities.
+
+#### **1. Clone or Download This Repository**
 ```bash
 git clone https://github.com/Brixpowers90/OpenFoamGetStarted.git
 cd OpenFoamGetStarted
 ```
 
-### **2. Run the Installation Script**
+#### **2. Run the Installation Script**
 
-#### **Windows (PowerShell)**
+##### **Windows (PowerShell)**
 ```powershell
 .\install_openfoam_docker.ps1
 ```
 
-#### **macOS/Linux (Bash)**
+##### **macOS/Linux (Bash)**
 ```bash
 chmod +x install_openfoam_docker.sh
 ./install_openfoam_docker.sh
 ```
 
-### **3. Follow the Prompts**
-- The script will check if Docker is installed.
-- If not, it will guide you to install Docker.
-- Once Docker is running, it will download the OpenFOAM image and start a container.
-- You will be prompted to run a test case (`icoFoam`).
+---
+
+### **\ud83d\udcdd Method 2: No Admin Rights / No PowerShell (Corporate Environments)**
+For users with restricted access where PowerShell scripts (.ps1) are blocked.
+
+#### **1. Install Docker Desktop**
+- Download from: [https://www.docker.com/products/docker-desktop/](https://www.docker.com/products/docker-desktop/)
+- Install and launch Docker Desktop
+
+#### **2. Download OpenFOAM Image**
+Open Command Prompt (cmd) and run:
+```cmd
+docker pull openfoam/openfoam:v2412
+```
+
+#### **3. Start OpenFOAM**
+**Option A**: Double-click `start_openfoam.cmd` in this folder
+
+**Option B**: Open Command Prompt and run:
+```cmd
+docker run -it --name my-openfoam -v "%USERPROFILE%\Documents\OpenFOAM_cases:/home/openfoam/cases" openfoam/openfoam:v2412
+```
+
+#### **4. Follow the Quick Start Guide**
+See [`QUICK_START.txt`](QUICK_START.txt) for step-by-step instructions to run your first simulation.
+
+**Detailed guide**: [`INSTALL_GUIDE_NO_ADMIN.md`](INSTALL_GUIDE_NO_ADMIN.md)
 
 ---
 
-## **📂 Project Structure**
+## **\ud83d\udcc2 Project Structure**
 
 | File | Description |
 |------|-------------|
-| [`install_openfoam_docker.ps1`](install_openfoam_docker.ps1) | Windows PowerShell script to install and run OpenFOAM in Docker. |
-| [`install_openfoam_docker.sh`](install_openfoam_docker.sh) | macOS/Linux Bash script to install and run OpenFOAM in Docker. |
-| [`run_test_case.sh`](run_test_case.sh) | Script to create and run a simple `icoFoam` test case inside the container. |
-| [`GETTING_STARTED.md`](GETTING_STARTED.md) | Step-by-step guide to using OpenFOAM with Docker. |
-| [`UNINSTALL.md`](UNINSTALL.md) | Guide to removing OpenFOAM and Docker. |
-| [`Dockerfile`](Dockerfile) | Optional: Custom Dockerfile to extend the OpenFOAM image. |
+| [`install_openfoam_docker.ps1`](install_openfoam_docker.ps1) | Windows PowerShell script for standard installation |
+| [`install_openfoam_docker.sh`](install_openfoam_docker.sh) | macOS/Linux Bash script for standard installation |
+| [`start_openfoam.cmd`](start_openfoam.cmd) | Windows CMD script for restricted environments |
+| [`QUICK_START.txt`](QUICK_START.txt) | Quick reference guide for corporate users |
+| [`INSTALL_GUIDE_NO_ADMIN.md`](INSTALL_GUIDE_NO_ADMIN.md) | Detailed guide for no-admin environments |
+| [`run_test_case.sh`](run_test_case.sh) | Script to create and run a simple `icoFoam` test case |
+| [`GETTING_STARTED.md`](GETTING_STARTED.md) | Step-by-step guide for standard installation |
+| [`UNINSTALL.md`](UNINSTALL.md) | Guide to removing OpenFOAM and Docker |
+| [`Dockerfile`](Dockerfile) | Optional: Custom Dockerfile to extend the OpenFOAM image |
 
 ---
 
-## **🧪 Test the Installation**
+## **\ud83e\uddea Test the Installation**
 
 Once the OpenFOAM container is running, you can test it by running:
 ```bash
@@ -76,7 +100,7 @@ This will:
 
 ---
 
-## **📊 Visualize Results**
+## **\ud83d\udcca Visualize Results**
 
 ### **Inside the Container**
 ```bash
@@ -93,20 +117,22 @@ paraFoam
 
 ---
 
-## **🛑 Uninstall OpenFOAM**
+## **\ud83d\uded1 Uninstall OpenFOAM**
 
 To remove OpenFOAM and Docker, follow the steps in [`UNINSTALL.md`](UNINSTALL.md).
 
 ---
 
-## **📚 Documentation**
+## **\ud83d\udcda Documentation**
 
-- **[Getting Started Guide](GETTING_STARTED.md)**: Detailed instructions for running your first simulation.
-- **[Uninstall Guide](UNINSTALL.md)**: Steps to remove OpenFOAM and Docker.
+- **[Getting Started Guide](GETTING_STARTED.md)**: Detailed instructions for standard installation
+- **[No-Admin Installation Guide](INSTALL_GUIDE_NO_ADMIN.md)**: For corporate environments with restrictions
+- **[Quick Start Reference](QUICK_START.txt)**: Quick commands and troubleshooting
+- **[Uninstall Guide](UNINSTALL.md)**: Steps to remove OpenFOAM and Docker
 
 ---
 
-## **🔧 Customization**
+## **\ud83d\udd27 Customization**
 
 ### **Build a Custom Docker Image**
 If you need additional tools (e.g., Python packages), you can build a custom image using the provided `Dockerfile`:
@@ -123,7 +149,7 @@ docker run -it --rm -v "$HOME/my_cases:/home/openfoam/my_cases" openfoam/openfoa
 
 ---
 
-## **❓ Troubleshooting**
+## **\u2753 Troubleshooting**
 
 ### **Docker Not Running**
 - **Windows/macOS**: Start Docker Desktop.
@@ -139,12 +165,17 @@ docker run -it --rm -v "$HOME/my_cases:/home/openfoam/my_cases" openfoam/openfoa
 ### **OpenFOAM Command Not Found**
 - Ensure you are inside the Docker container. Run:
   ```bash
-  docker exec -it openfoam-v2412 bash
+  docker exec -it my-openfoam bash
   ```
+
+### **Corporate Environment Issues**
+- **Proxy settings**: Configure in Docker Desktop → Settings → Resources → Proxies
+- **Firewall**: Ask IT to allow connections to `hub.docker.com` (port 443)
+- **Antivirus**: Ask IT to add exceptions for Docker
 
 ---
 
-## **🎉 Next Steps**
+## **\ud83c\udf89 Next Steps**
 
 1. **Explore tutorials**: Check out the cases in `/opt/openfoam/tutorials`.
 2. **Modify cases**: Edit boundary conditions, mesh, or solver settings.
@@ -153,7 +184,7 @@ docker run -it --rm -v "$HOME/my_cases:/home/openfoam/my_cases" openfoam/openfoa
 
 ---
 
-## **📞 Support**
+## **\ud83d\udcde Support**
 
 - [OpenFOAM Official Documentation](https://www.openfoam.com/documentation/)
 - [OpenFOAM Docker GitHub](https://github.com/OpenFOAM/OpenFOAM-docker)
@@ -161,13 +192,13 @@ docker run -it --rm -v "$HOME/my_cases:/home/openfoam/my_cases" openfoam/openfoa
 
 ---
 
-## **📝 License**
+## **\ud83d\udcdd License**
 
 This project is provided as-is for educational purposes. OpenFOAM is licensed under the **GPL v3**. Docker images are provided by [OpenCFD Ltd](https://www.openfoam.com/).
 
 ---
 
-## **🙏 Acknowledgments**
+## **\ud83d\ude4f Acknowledgments**
 
 - [OpenFOAM](https://www.openfoam.com/)
 - [Docker](https://www.docker.com/)

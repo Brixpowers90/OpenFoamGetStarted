@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenFOAM Quick Start - No Admin Required</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #0066cc;
+            text-align: center;
+            border-bottom: 2px solid #0066cc;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #0088cc;
+            margin-top: 30px;
+        }
+        .step {
+            background-color: white;
+            border-left: 4px solid #0066cc;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 0 4px 4px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .step h3 {
+            margin-top: 0;
+            color: #0066cc;
+        }
+        .cmd {
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            padding: 10px 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+        }
+        .download-btn {
+            display: inline-block;
+            background-color: #0066cc;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 4px;
+            margin: 5px 0;
+            font-weight: bold;
+        }
+        .download-btn:hover {
+            background-color: #0055aa;
+        }
+        .note {
+            background-color: #fff3cd;
+            border: 1px solid #ffc107;
+            padding: 10px 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #d4edda;
+            border: 1px solid #28a745;
+            padding: 10px 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .file-link {
+            display: block;
+            background-color: #e9ecef;
+            padding: 10px 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #333;
+        }
+        .file-link:hover {
+            background-color: #dee2e6;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        li {
+            margin: 8px 0;
+        }
+        .tips {
+            background-color: #e7f3ff;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        .troubleshooting {
+            background-color: #fff5f5;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>\ud83d\ud83\ufe0f OpenFOAM Quick Start Guide</h1>
+    <p><strong>No Admin Rights Required - Perfect for Corporate PCs</strong></p>
+
+    <div class="note">
+        <strong>\ud83d\udc81 Welcome!</strong> This guide helps you install and run OpenFOAM using Docker without requiring administrator privileges.
+        Perfect for corporate environments where PowerShell scripts (.ps1) are blocked.
+    </div>
+
+    <div class="step">
+        <h3>\ud83d\udcc1 Step 1: Install Docker Desktop</h3>
+        <p>Docker is required to run OpenFOAM in a container.</p>
+        
+        <p><strong>Download Docker Desktop:</strong></p>
+        <a href="https://www.docker.com/products/docker-desktop/" class="download-btn">Download Docker Desktop</a>
+        
+        <p><strong>Installation:</strong></p>
+        <ul>
+            <li>Run the downloaded installer</li>
+            <li>Follow the installation prompts</li>
+            <li>Restart your computer when prompted</li>
+            <li>Launch Docker Desktop from the Start Menu</li>
+            <li>Wait for the whale icon \ud83d\udc33 to appear in the system tray</li>
+        </ul>
+        
+        <div class="note">
+            <strong>Note:</strong> Docker Desktop is free for personal use and many corporate environments.
+        </div>
+    </div>
+
+    <div class="step">
+        <h3>\ud83d\udce9 Step 2: Download OpenFOAM Docker Image</h3>
+        <p>Open Command Prompt (cmd) and run:</p>
+        <div class="cmd">docker pull openfoam/openfoam:v2412</div>
+        
+        <div class="note">
+            <strong>What this does:</strong>
+            <ul>
+                <li>Downloads the latest OpenFOAM v2412 image (~2-3 GB)</li>
+                <li>Includes OpenFOAM, ParaView, and all dependencies</li>
+                <li>May take 5-15 minutes depending on your internet speed</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="step">
+        <h3>\ud83d\udcc2 Step 3: Create Cases Folder</h3>
+        <p>Create a folder for your simulation cases:</p>
+        <div class="cmd">Documents\OpenFOAM_cases</div>
+        
+        <p>You can create this folder using File Explorer.</p>
+    </div>
+
+    <div class="step">
+        <h3>\ud83d\udc33 Step 4: Start OpenFOAM Container</h3>
+        
+        <p><strong>Option A: Easiest Method</strong></p>
+        <p>Double-click this file:</p>
+        <a href="start_openfoam.cmd" class="file-link">\ud83d\udccv start_openfoam.cmd</a>
+        
+        <p><strong>Option B: Manual Method</strong></p>
+        <p>Open Command Prompt and run:</p>
+        <div class="cmd">docker run -it --name my-openfoam -v "%USERPROFILE%\Documents\OpenFOAM_cases:/home/openfoam/cases" openfoam/openfoam:v2412</div>
+        
+        <div class="success">
+            <strong>\u2705 Success!</strong> You're now inside the OpenFOAM container.
+        </div>
+    </div>
+
+    <div class="step">
+        <h3>\ud83d\udca1 Step 5: Run Your First Simulation</h3>
+        <p>Inside the container, copy and paste these commands one by one:</p>
+        
+        <div class="cmd">mkdir -p /home/openfoam/cases/test_icoFoam && cd /home/openfoam/cases/test_icoFoam</div>
+        
+        <div class="cmd">cp -r /opt/openfoam/tutorials/incompressible/icoFoam/cavity .</div>
+        
+        <div class="cmd">blockMesh</div>
+        
+        <div class="cmd">icoFoam</div>
+        
+        <div class="note">
+            <strong>What this does:</strong>
+            <ul>
+                <li><code>blockMesh</code> creates the computational mesh</li>
+                <li><code>icoFoam</code> runs the incompressible flow solver</li>
+                <li>Simulation runs for a short time</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="step">
+        <h3>\ud83d\udcc8 Step 6: Visualize Results</h3>
+        
+        <p><strong>Option A: Use ParaView Inside Container</strong></p>
+        <div class="cmd">paraFoam</div>
+        <ul>
+            <li>Navigate to <code>/home/openfoam/cases/test_icoFoam</code></li>
+            <li>Open the <code>cavity.foam</code> file</li>
+            <li>Click <strong>Apply</strong> to see your simulation results</li>
+        </ul>
+        
+        <p><strong>Option B: Use ParaView on Your Host Machine</strong></p>
+        <ol>
+            <li><a href="https://www.paraview.org/download/" class="download-btn">Download ParaView</a></li>
+            <li>Install ParaView</li>
+            <li>Open ParaView</li>
+            <li>Navigate to: <code>Documents\OpenFOAM_cases\test_icoFoam</code></li>
+            <li>Open the <code>cavity.foam</code> file</li>
+            <li>Click <strong>Apply</strong> to visualize</li>
+        </ol>
+    </div>
+
+    <div class="step">
+        <h3>\ud83d\udcde Step 7: Restart Later</h3>
+        <p>To restart your container with all files intact:</p>
+        <div class="cmd">docker start -ai my-openfoam</div>
+        
+        <p>To stop the container:</p>
+        <div class="cmd">docker stop my-openfoam</div>
+    </div>
+
+    <div class="tips">
+        <h3>\ud83d\udca1 Pro Tips</h3>
+        <ul>
+            <li><strong>Copy files from container:</strong> <code>docker cp my-openfoam:/path/in/container C:\path\on\host</code></li>
+            <li><strong>List running containers:</strong> <code>docker ps</code></li>
+            <li><strong>List all containers:</strong> <code>docker ps -a</code></li>
+            <li><strong>Remove container:</strong> <code>docker rm my-openfoam</code></li>
+            <li><strong>Remove image:</strong> <code>docker rmi openfoam/openfoam:v2412</code></li>
+        </ul>
+    </div>
+
+    <div class="troubleshooting">
+        <h3>\u2753 Troubleshooting</h3>
+        
+        <h4>Docker not running?</h4>
+        <ul>
+            <li><strong>Windows/macOS:</strong> Start Docker Desktop (whale icon in system tray)</li>
+            <li><strong>Linux:</strong> Run <code>sudo systemctl start docker</code></li>
+        </ul>
+        
+        <h4>Permission denied?</h4>
+        <ul>
+            <li>On Linux, add your user to the docker group: <code>sudo usermod -aG docker $USER</code></li>
+            <li>Then <strong>log out and log back in</strong></li>
+        </ul>
+        
+        <h4>Can't access files after container exit?</h4>
+        <p>Your files are safe in <code>Documents\OpenFOAM_cases</code>. Just restart the container with the same <code>-v</code> volume mount.</p>
+        
+        <h4>Out of memory?</h4>
+        <p>In Docker Desktop: Settings \u276f Resources \u276f Increase memory allocation</p>
+        
+        <h4>Corporate firewall blocking Docker?</h4>
+        <p>Ask IT to allow connections to <code>hub.docker.com</code> on port 443.</p>
+    </div>
+
+    <div class="step">
+        <h3>\ud83d\udcc3 Additional Resources</h3>
+        <ul>
+            <li><a href="INSTALL_GUIDE_NO_ADMIN.md" class="file-link">\ud83d\udcc4 Detailed Installation Guide (No Admin)</a></li>
+            <li><a href="QUICK_START.txt" class="file-link">\ud83d\udcc3 Quick Start Reference (Text)</a></li>
+            <li><a href="GETTING_STARTED.md" class="file-link">\ud83d\udcc2 Standard Getting Started Guide</a></li>
+            <li><a href="https://www.openfoam.com/documentation/" class="download-btn">OpenFOAM Documentation</a></li>
+            <li><a href="https://hub.docker.com/u/openfoam" class="download-btn">OpenFOAM Docker Images</a></li>
+            <li><a href="https://discourse.openfoam.com/" class="download-btn">OpenFOAM Forum</a></li>
+        </ul>
+    </div>
+
+    <div class="success" style="text-align: center; font-size: 18px; margin: 40px 0;">
+        <strong>\ud83c\udf89 Congratulations! You're ready to use OpenFOAM!</strong>
+    </div>
+
+    <div style="text-align: center; margin-top: 40px; color: #666; font-size: 14px;">
+        <p>This guide was created for corporate environments with restricted access.</p>
+        <p>For questions or issues, check the <a href="https://discourse.openfoam.com/">OpenFOAM Forum</a>.</p>
+    </div>
+</body>
+</html>
